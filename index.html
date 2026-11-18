@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escudo do Mestre Completo - Mausritter</title>
+  <style>
+    :root {
+      --bg-paper: #f7f4ec;
+      --ink: #1b1a18;
+      --border: #1b1a18;
+      --accent: #b53425;
+      --card-bg: #fffdf9;
+      --muted-bg: #e6dfd1;
+      --muted: #5c5850;
+      --success: #2a7b46;
+    }
+
+    * { box-sizing: border-box; font-family: 'Courier New', Courier, monospace; }
+
+    body {
+      background-color: #201e1c;
+      color: var(--ink);
+      margin: 0;
+      padding: 14px 8px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      background-color: var(--bg-paper);
+      width: 100%;
+      max-width: 1180px;
+      padding: 20px;
+      border: 3px solid var(--border);
+      box-shadow: 8px 8px 0px #0d0c0b;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 3px solid var(--border);
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.7rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .subtitle { font-size: 0.78rem; color: var(--muted); font-weight: bold; }
+
+    .dice-bar { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
+
+    /* Navegação por Abas */
+    .tabs {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 14px;
+      border-bottom: 3px solid var(--border);
+      padding-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: var(--card-bg);
+      color: var(--ink);
+      border: 2px solid var(--border);
+      padding: 7px 12px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+    }
+
+    .tab-btn.active {
+      background: var(--ink);
+      color: var(--bg-paper);
+    }
+
+    .tab-btn:hover:not(.active) { background: var(--muted-bg); }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* Console de Resultados */
+    .console {
+      background: var(--ink);
+      color: #fff;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+      border-left: 6px solid var(--accent);
+      min-height: 48px;
+      line-height: 1.45;
+    }
+
+    .console strong { color: #ffd166; }
+
+    /* Botões e Inputs */
+    button.action {
+      background: var(--ink);
+      color: var(--bg-paper);
+      border: 2px solid var(--ink);
+      padding: 5px 9px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 0.76rem;
+    }
+
+    button.action:hover { background: var(--accent); border-color: var(--accent); }
+    button.accent { background: var(--accent); border-color: var(--accent); color: #fff; }
+    button.accent:hover { background: #8c2317; }
+    button.ghost { background: transparent; color: var(--ink); border: 1px solid var(--ink); padding: 4px 8px; font-size: 0.74rem; cursor: pointer; font-weight: bold; }
+    button.ghost:hover { background: var(--muted-bg); }
+
+    select, input[type="text"], input[type="number"], textarea {
+      border: 1px solid var(--border);
+      background: var(--bg-paper);
+      padding: 4px 6px;
+      font-size: 0.82rem;
+      color: var(--ink);
+    }
+
+    textarea { width: 100%; resize: vertical; }
+
+    /* Grids e Cartões */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 14px; }
+
+    @media (max-width: 880px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    }
+
+    .box {
+      border: 2px solid var(--border);
+      background: var(--card-bg);
+      padding: 12px;
+    }
+
+    .box-title {
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 0.84rem;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 5px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    /* Monitor de Turnos e Vigílias */
+    .turn-track {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      margin: 8px 0;
+    }
+
+    .turn-box {
+      border: 2px solid var(--border);
+      padding: 6px 2px;
+      text-align: center;
+      font-size: 0.72rem;
+      font-weight: bold;
+      cursor: pointer;
+      background: var(--bg-paper);
+      user-select: none;
+    }
+
+    .turn-box.checked { background: var(--accent); color: #fff; }
+    .turn-box.enc { border-style: dashed; }
+
+    .watch-bar {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .watch-pill {
+      border: 2px solid var(--border);
+      padding: 4px 8px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .watch-pill.active { background: var(--ink); color: #fff; }
+
+    /* Tabelas de Referência */
+    table.ref { width: 100%; border-collapse: collapse; font-size: 0.77rem; }
+    table.ref th, table.ref td { border: 1px solid var(--border); padding: 4px 6px; text-align: left; }
+    table.ref th { background: var(--muted-bg); }
+
+    /* Apêndice de Criaturas */
+    .creature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    @media (max-width: 820px) {
+      .creature-grid { grid-template-columns: 1fr; }
+    }
+
+    .creature-card {
+      border: 2px solid var(--border);
+      background: var(--card-bg);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .creature-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 6px;
+      margin-bottom: 8px;
+    }
+
+    .creature-header h3 { margin: 0; font-size: 1.02rem; text-transform: uppercase; }
+    .scale-tag { background: var(--accent); color: #fff; font-size: 0.68rem; padding: 2px 6px; font-weight: bold; }
+
+    .stat-strip {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+      background: var(--muted-bg);
+      border: 1px solid var(--border);
+      padding: 5px;
+      text-align: center;
+      font-size: 0.78rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .creature-body { font-size: 0.79rem; line-height: 1.35; }
+    .creature-body p { margin: 4px 0; }
+    .variants-list { margin: 6px 0; padding-left: 16px; font-size: 0.75rem; color: #333; }
+
+    .combat-tracker {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border);
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+      font-size: 0.75rem;
+    }
+
+    /* Arena Rápida de Combate */
+    .encounter-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .foe-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      background: var(--bg-paper);
+      border: 1px solid var(--border);
+      padding: 6px 8px;
+      flex-wrap: wrap;
+      font-size: 0.78rem;
+    }
+
+    .foe-row input[type="number"] { width: 46px; text-align: center; font-weight: bold; }
+
+    /* Facções */
+    .faction-card {
+      border: 2px solid var(--border);
+      background: var(--card-bg);
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .goal-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 5px 0;
+      font-size: 0.8rem;
+    }
+
+    .dot {
+      width: 14px;
+      height: 14px;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      display: inline-block;
+      cursor: pointer;
+      background: #fff;
+    }
+
+    .dot.filled { background: var(--accent); }
+
+    .output-card {
+      background: var(--bg-paper);
+      border: 1px dashed var(--border);
+      padding: 10px;
+      margin-top: 8px;
+      font-size: 0.82rem;
+      line-height: 1.42;
+      min-height: 75px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div>
+      <h1>ESCUDO DO MESTRE — MAUSRITTER</h1>
+      <div class="subtitle">Exploração, Arbitragem, Bestiário, Facções & Mercado</div>
+    </div>
+    <div class="dice-bar">
+      <button class="action" onclick="rollQuick(20, 'd20')">d20</button>
+      <button class="action" onclick="rollQuick(12, 'd12')">d12</button>
+      <button class="action" onclick="rollQuick(10, 'd10')">d10</button>
+      <button class="action" onclick="rollQuick(8, 'd8')">d8</button>
+      <button class="action" onclick="rollQuick(6, 'd6')">d6</button>
+      <button class="action" onclick="rollQuick(4, 'd4')">d4</button>
+      <button class="action" onclick="rollQuick(66, 'd66')">d66</button>
+      <button class="ghost" id="soundToggle" onclick="toggleSound()">🔊 Som: ON</button>
+      <button class="ghost" onclick="exportCampaign()">💾 Backup</button>
+      <button class="ghost" onclick="document.getElementById('importFile').click()">📂 Carregar</button>
+      <input type="file" id="importFile" style="display:none" accept=".json" onchange="importCampaign(event)">
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="openTab('tab-explore', this)">🧭 Exploração & Tempo</button>
+    <button class="tab-btn" onclick="openTab('tab-creatures', this)">🐍 Bestiário & Combate</button>
+    <button class="tab-btn" onclick="openTab('tab-generators', this)">🏰 Masmorras, Tesouros & PNJs</button>
+    <button class="tab-btn" onclick="openTab('tab-factions', this)">👑 Facções & Notas</button>
+    <button class="tab-btn" onclick="openTab('tab-market', this)">💰 Mercado & Regras</button>
+  </div>
+
+  <div class="console" id="gmConsole">
+    Pronto para mestrar. Use os rastreadores abaixo ou gere encontros, climas, hexágonos, criaturas e tesouros com um clique.
+  </div>
+
+  <!-- =========================================================
+       ABA 1: EXPLORAÇÃO, TEMPO E REGRAS DO ESCUDO
+       ========================================================= -->
+  <div id="tab-explore" class="tab-panel active">
+    <div class="grid-2">
+      <!-- Monitor de Turnos (Masmorra) e Vigílias (Ermos) -->
+      <div class="box">
+        <div class="box-title">
+          <span>Monitor de Turnos (10 min cada)</span>
+          <button class="ghost" onclick="resetTurns()">Zerar Turnos</button>
+        </div>
+        <div style="font-size:0.75rem; color:var(--muted);">
+          <strong>⚡ Encontro (1-em-6):</strong> Turnos 3, 6, 9, 12 | <strong>🔥 Tocha apaga:</strong> Turno 6 e 12
+        </div>
+        <div class="turn-track" id="turnTrack"></div>
+
+        <div class="box-title" style="margin-top:14px;">
+          <span>Viagem nos Ermos (Vigílias de 6h)</span>
+          <span style="font-size:0.72rem;">Dia: <input type="number" id="dayCount" value="1" style="width:48px; font-weight:bold;" oninput="saveGMState()"></span>
+        </div>
+        <div class="watch-bar" id="watchBar">
+          <div class="watch-pill active" onclick="selectWatch(this, 'Manhã (Encontro 1-em-6)')">🌅 Manhã</div>
+          <div class="watch-pill" onclick="selectWatch(this, 'Tarde')">☀️ Tarde</div>
+          <div class="watch-pill" onclick="selectWatch(this, 'Noite (Encontro 1-em-6)')">🌙 Noite</div>
+          <div class="watch-pill" onclick="selectWatch(this, 'Madrugada (Descanso)')">💤 Madrugada</div>
+        </div>
+        <div style="font-size:0.74rem; margin-top:8px; color:var(--muted); line-height:1.35;">
+          • <strong>Deslocamento:</strong> 1 hexágono (1 km) por Vigília (Terreno difícil = 2 Vigílias).<br>
+          • <strong>Forragear:</strong> 1 Vigília nos ermos rende <strong>d3 usos de rações</strong>.<br>
+          • <strong>Fadiga:</strong> Sem descansar 1 Vigília/dia = Condição <strong>Exausto</strong>.
+        </div>
+      </div>
+
+      <!-- Clima, Encontros, Reação e Sorte -->
+      <div class="box">
+        <div class="box-title">Testes Rápidos do Mestre</div>
+
+        <div style="display:flex; gap:6px; align-items:center; margin-bottom:8px; flex-wrap:wrap;">
+          <strong style="font-size:0.8rem;">Clima (2d6):</strong>
+          <select id="seasonSelect" onchange="saveGMState()">
+            <option value="primavera">Primavera</option>
+            <option value="verao">Verão</option>
+            <option value="outono">Outono</option>
+            <option value="inverno">Inverno</option>
+          </select>
+          <button class="accent" onclick="rollWeather()">Rolar Clima</button>
+        </div>
+
+        <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;">
+          <button class="action" onclick="rollEncounter()">🎲 Encontro (1d6)</button>
+          <button class="action" onclick="rollReaction()">🗣️ Reação (2d6)</button>
+          <button class="action" onclick="rollOmen()">📜 Veracidade Rumor</button>
+        </div>
+
+        <div style="display:flex; gap:6px; align-items:center; margin-bottom:10px; flex-wrap:wrap;">
+          <strong style="font-size:0.8rem;">Teste de Sorte:</strong>
+          <select id="luckChance">
+            <option value="1">1-em-6 (Improvável)</option>
+            <option value="2">2-em-6 (Pouco provável)</option>
+            <option value="3" selected>3-em-6 (50%)</option>
+            <option value="4">4-em-6 (Provável)</option>
+            <option value="5">5-em-6 (Quase certo)</option>
+          </select>
+          <button class="action" onclick="rollLuck()">Testar Sorte</button>
+        </div>
+
+        <table class="ref">
+          <tr><th>2d6</th><th>Reação da Criatura</th></tr>
+          <tr><td><strong>2</strong></td><td>Hostil. Como os ratos a irritaram?</td></tr>
+          <tr><td><strong>3-5</strong></td><td>Inamistosa. Como pode ser acalmada?</td></tr>
+          <tr><td><strong>6-8</strong></td><td>Incerta. O que poderia conquistá-la?</td></tr>
+          <tr><td><strong>9-11</strong></td><td>Falante. O que ela poderia negociar?</td></tr>
+          <tr><td><strong>12</strong></td><td>Útil. Como ela pode ajudar os ratos?</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Geradores de Hexágono e Povoado -->
+    <div class="grid-2">
+      <div class="box">
+        <div class="box-title">
+          <span>Gerador de Hexágono (Ermos)</span>
+          <button class="accent" onclick="generateHex()">Gerar Hexágono</button>
+        </div>
+        <div class="output-card" id="hexOutput">Clique em "Gerar Hexágono" para sortear Tipo (d6), Marco (d20) e Detalhe (d6/d8).</div>
+      </div>
+
+      <div class="box">
+        <div class="box-title">
+          <span>Gerador de Povoado de Ratos</span>
+          <button class="accent" onclick="generateSettlement()">Gerar Povoado</button>
+        </div>
+        <div class="output-card" id="settlementOutput">Clique em "Gerar Povoado" para sortear Nome, Tamanho, Governo, Indústria, Característica, Evento e Taverna.</div>
+      </div>
+    </div>
+
+    <!-- Resumo de Regras Críticas do Escudo -->
+    <div class="grid-3">
+      <div class="box">
+        <div class="box-title">Combate & Dano</div>
+        <div style="font-size:0.76rem; line-height:1.4;">
+          • <strong>Iniciativa:</strong> Surpresa age antes; senão, Teste de DES.<br>
+          • <strong>Ataques sempre acertam:</strong> Role dano da arma - Armadura.<br>
+          • <strong>Prejudicado:</strong> d4 dano | <strong>Melhorado:</strong> d12 dano.<br>
+          • <strong>Dano Crítico:</strong> Dano passa do PR para FOR → Teste de FOR. Se falhar: ganha Condição <em>Ferido</em> e fica incapacitado (morre em 6 Turnos sem ajuda).<br>
+          • <strong>Moral (VON):</strong> Desvantagem clara, 1º Dano Crítico ou aliado cai/foge.
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="box-title">Descanso, Magia & Idioma</div>
+        <div style="font-size:0.76rem; line-height:1.4;">
+          • <strong>Descanso Curto (1 Turno):</strong> Restaura d6+1 PR.<br>
+          • <strong>Descanso Longo (1 Vigília):</strong> Restaura todo PR (se cheio, d6 em 1 atributo).<br>
+          • <strong>Descanso Completo (1 semana, 20g):</strong> Restaura atributos e Condições.<br>
+          • <strong>Magia:</strong> Role [Poder]d6. Cada 4-6 marca 1 uso. Cada <strong>6</strong> causa d6 dano em VON + Teste de VON (falha = <em>Drenado</em>).<br>
+          • <strong>Idioma:</strong> Ratos (fácil), Roedores (sotaque), Mamíferos (Teste de VON).
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="box-title">Ajudantes & Economia</div>
+        <div style="font-size:0.76rem; line-height:1.4;">
+          • <strong>Recrutar:</strong> 1 dia no povoado + Teste de VON ou 20g.<br>
+          • <strong>Ajudante típico:</strong> d6 PR, FOR 2d6, DES 2d6, VON 2d6 (6 espaços).<br>
+          • <strong>Consertos:</strong> 10% do preço por ponto de uso.<br>
+          • <strong>Banco:</strong> Taxa de 1% para sacar itens/grãos.<br>
+          • <strong>Armada (20+ guerreiros):</strong> 1000g para formar + 1000g/semana.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       ABA 2: APÊNDICE DE CRIATURAS & ARENA DE COMBATE
+       ========================================================= -->
+  <div id="tab-creatures" class="tab-panel">
+    <!-- Rastreador Rápido de Encontro Ativo -->
+    <div class="box" style="margin-bottom:14px;">
+      <div class="box-title">
+        <span>⚔️ Rastreador de Encontro Ativo (Inimigos em Cena)</span>
+        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+          <select id="addFoeSelect"></select>
+          <button class="accent" onclick="addFoeToEncounter()">+ Adicionar Inimigo</button>
+          <button class="ghost" onclick="clearEncounter()">Limpar Cena</button>
+        </div>
+      </div>
+      <div class="encounter-list" id="encounterList">
+        <div style="font-size:0.78rem; color:var(--muted);">Nenhum inimigo adicionado à cena. Selecione acima ou clique em "+ Cena" nos cartões abaixo.</div>
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+      <input type="text" id="creatureFilter" placeholder="Filtrar criatura (ex: Gato, Aranha, Sapo...)" style="width:290px;" oninput="filterCreatures()">
+      <span style="font-size:0.78rem; color:var(--muted);">Todas as 11 entradas oficiais do Bestiário (págs. 22–24).</span>
+    </div>
+    <div class="creature-grid" id="creatureGrid"></div>
+  </div>
+
+  <!-- =========================================================
+       ABA 3: GERADORES DE MASMORRAS, TESOUROS, FEITIÇOS E PNJS
+       ========================================================= -->
+  <div id="tab-generators" class="tab-panel">
+    <div class="grid-2">
+      <div class="box">
+        <div class="box-title">
+          <span>Local de Aventura & Salas</span>
+          <div style="display:flex; gap:4px;">
+            <button class="accent" onclick="generateAdventureSite()">Tema do Local</button>
+            <button class="action" onclick="generateRoom()">Abastecer Sala</button>
+          </div>
+        </div>
+        <div class="output-card" id="siteOutput">Gere o tema de um Local de Aventura (Construção, Ruína, Habitantes, Objetivo e Segredo) ou sorteie salas individuais (Tipo, Criatura, Tesouro e Conteúdo).</div>
+      </div>
+
+      <div class="box">
+        <div class="box-title">
+          <span>Tesouros, Espadas Mágicas & Feitiços</span>
+          <div style="display:flex; gap:4px; flex-wrap:wrap;">
+            <button class="accent" onclick="generateTreasure()">Tesouro (d20)</button>
+            <button class="action" onclick="generateMagicSword()">Espada Mágica</button>
+            <button class="action" onclick="generateSpell()">Feitiço (2d8)</button>
+          </div>
+        </div>
+        <div class="output-card" id="treasureOutput">Sorteie tesouros completos (com sub-tabelas automáticas), Espadas Mágicas (incluindo chance 1-em-6 de Maldição) ou Tabuletas de Feitiço com regra de recarga.</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="box">
+        <div class="box-title">
+          <span>Gerador de Rato PNJ</span>
+          <button class="accent" onclick="generateNPC()">Gerar PNJ</button>
+        </div>
+        <div class="output-card" id="npcOutput">Sorteia Nome, Posição Social, Pagamento, Signo, Visual, Peculiaridade, Desejo e Relação com o grupo.</div>
+      </div>
+
+      <div class="box">
+        <div class="box-title">
+          <span>Gerador de Semente de Aventura (d66)</span>
+          <button class="accent" onclick="generateHook()">Gerar Gancho</button>
+        </div>
+        <div class="output-card" id="hookOutput">Combina Criatura + Problema + Complicação da tabela oficial da página 43.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       ABA 4: FACÇÕES & DIÁRIO DE CAMPANHA
+       ========================================================= -->
+  <div id="tab-factions" class="tab-panel">
+    <div class="grid-2">
+      <div class="box">
+        <div class="box-title">
+          <span>Facções em Jogo</span>
+          <div style="display:flex; gap:4px; flex-wrap:wrap;">
+            <select id="factionTemplateSelect"></select>
+            <button class="accent" onclick="addFactionFromTemplate()">+ Adicionar</button>
+          </div>
+        </div>
+        <div style="font-size:0.74rem; color:var(--muted); margin-bottom:8px;">
+          Entre sessões: role <strong>d6 + recursos relevantes - recursos rivais</strong> (4-5 = +1 progresso; 6+ = +2 progressos).
+        </div>
+        <div id="factionsList"></div>
+      </div>
+
+      <div class="box">
+        <div class="box-title">
+          <span>Notas de Sessão, Rumores & Hexágonos</span>
+          <span style="font-size:0.7rem; color:var(--success);">Salvo automaticamente</span>
+        </div>
+        <textarea id="gmNotes" rows="18" placeholder="Anote aqui o mapa de hexágonos (1 a 25), rumores plantados (1-3 verdade, 4-5 parcial, 6 mentira), nomes de PNJs e tesouros..." oninput="saveGMState()"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       ABA 5: MERCADO, EQUIPAMENTOS & TABELAS DE REFERÊNCIA
+       ========================================================= -->
+  <div id="tab-market" class="tab-panel">
+    <div class="grid-2">
+      <div class="box">
+        <div class="box-title">
+          <span>Tabela de Preços (Grãos)</span>
+          <input type="text" id="marketFilter" placeholder="Buscar item..." style="width:180px;" oninput="filterMarket()">
+        </div>
+        <div style="max-height:460px; overflow-y:auto;">
+          <table class="ref" id="marketTable">
+            <thead>
+              <tr><th>Categoria</th><th>Item / Serviço</th><th>Preço</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <div class="box" style="margin-bottom:14px;">
+          <div class="box-title">Condições Oficiais (Pág. 8 & 12)</div>
+          <table class="ref">
+            <tr><th>Condição</th><th>Efeito & Como Remover</th></tr>
+            <tr><td><strong>Exausto</strong></td><td>Ocupa 1 espaço. <em>Termina:</em> Após Descanso Longo.</td></tr>
+            <tr><td><strong>Fome</strong></td><td>Ocupa 1 espaço (ganha se não comer por 1 dia). <em>Termina:</em> Após refeição.</td></tr>
+            <tr><td><strong>Ferido</strong></td><td>Ocupa 1 espaço. Desvantagem em FOR & DES. <em>Termina:</em> Após Descanso Completo (1 semana).</td></tr>
+            <tr><td><strong>Amedrontado</strong></td><td>Ocupa 1 espaço. Teste de VON para se aproximar da fonte do medo.</td></tr>
+            <tr><td><strong>Drenado</strong></td><td>Ocupa 1 espaço (falha mágica). <em>Termina:</em> Descanso Completo.</td></tr>
+          </table>
+        </div>
+
+        <div class="box">
+          <div class="box-title">Progressão de Nível (Pág. 11)</div>
+          <table class="ref">
+            <tr><th>Nível</th><th>Dado de Vida</th><th>Bravura</th><th>XP Necessário</th></tr>
+            <tr><td>1</td><td>1d6</td><td>0</td><td>0</td></tr>
+            <tr><td>2</td><td>2d6</td><td>1</td><td>1.000 XP</td></tr>
+            <tr><td>3</td><td>3d6</td><td>2</td><td>3.000 XP</td></tr>
+            <tr><td>4</td><td>4d6</td><td>2</td><td>6.000 XP</td></tr>
+            <tr><td>5+</td><td>4d6</td><td>3</td><td>+5.000 XP por nível</td></tr>
+          </table>
+          <div style="font-size:0.74rem; color:var(--muted); margin-top:6px;">
+            • <strong>Subir de nível:</strong> Role 1d20 para FOR, DES e VON (se maior que atual, +1). Role os DVs do novo nível (se maior que PR atual, adote; senão +1 PR).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function d(sides) { return Math.floor(Math.random() * sides) + 1; }
+  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+  function logConsole(html) { document.getElementById('gmConsole').innerHTML = html; }
+
+  // =========================================================
+  // ÁUDIO SINTETIZADO DE DADOS
+  // =========================================================
+  let soundEnabled = true;
+  let audioCtx = null;
+
+  function toggleSound() {
+    soundEnabled = !soundEnabled;
+    document.getElementById('soundToggle').textContent = soundEnabled ? '🔊 Som: ON' : '🔇 Som: OFF';
+  }
+
+  function playDiceSound() {
+    if (!soundEnabled) return;
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const now = audioCtx.currentTime;
+      [0, 0.055, 0.115, 0.185, 0.27].forEach((offset, idx) => {
+        const t = now + offset;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(680 + Math.random() * 400 - idx * 35, t);
+        osc.frequency.exponentialRampToValueAtTime(140, t + 0.035);
+        const vol = Math.max(0.05, 0.28 - idx * 0.045);
+        gain.gain.setValueAtTime(0.001, t);
+        gain.gain.linearRampToValueAtTime(vol, t + 0.004);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(t);
+        osc.stop(t + 0.045);
+      });
+    } catch (e) {}
+  }
+
+  // Navegação de Abas
+  function openTab(tabId, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function rollQuick(sides, label) {
+    playDiceSound();
+    if (sides === 66) {
+      logConsole(`🎲 <strong>d66:</strong> Resultado <strong>${d(6) * 10 + d(6)}</strong>`);
+      return;
+    }
+    logConsole(`🎲 <strong>${label}:</strong> Resultado <strong>${d(sides)}</strong>`);
+  }
+
+  // Monitor de Turnos
+  const turnTrack = document.getElementById('turnTrack');
+  for (let i = 1; i <= 12; i++) {
+    const div = document.createElement('div');
+    const isEnc = i % 3 === 0;
+    const isTorch = i % 6 === 0;
+    div.className = `turn-box ${isEnc ? 'enc' : ''}`;
+    div.id = `turn-${i}`;
+    div.innerHTML = `T${i} ${isEnc ? '⚡' : ''}${isTorch ? '🔥' : ''}`;
+    div.onclick = () => {
+      div.classList.toggle('checked');
+      if (div.classList.contains('checked')) {
+        let msg = `⏳ <strong>Turno ${i} marcado.</strong>`;
+        if (isEnc) msg += ` Role 1d6 para Encontro (1 = Encontro, 2 = Presságio)!`;
+        if (isTorch) msg += ` <strong>Tocha/Lanterna:</strong> Marque 1 ponto de uso!`;
+        logConsole(msg);
+      }
+      saveGMState();
+    };
+    turnTrack.appendChild(div);
+  }
+
+  function resetTurns() {
+    document.querySelectorAll('.turn-box').forEach(b => b.classList.remove('checked'));
+    logConsole(`⏳ Monitor de turnos zerado.`);
+    saveGMState();
+  }
+
+  function selectWatch(el, label) {
+    document.querySelectorAll('.watch-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    logConsole(`🧭 Vigília alterada para: <strong>${label}</strong>.`);
+  }
+
+  // Clima, Encontros, Reação e Sorte
+  const weatherTables = {
+    primavera: { 2:"Tempestade (Mau tempo!)", 3:"Chuviscando", 4:"Chuviscando", 5:"Chuviscando", 6:"Nublado", 7:"Nublado", 8:"Nublado", 9:"Brilhante e ensolarado", 10:"Brilhante e ensolarado", 11:"Brilhante e ensolarado", 12:"Claro e quente" },
+    verao: { 2:"Trovoada (Mau tempo!)", 3:"Muito quente (Mau tempo!)", 4:"Muito quente (Mau tempo!)", 5:"Muito quente (Mau tempo!)", 6:"Claro, quente", 7:"Claro, quente", 8:"Claro, quente", 9:"Solzinho gostoso", 10:"Solzinho gostoso", 11:"Solzinho gostoso", 12:"Lindamente quente" },
+    outono: { 2:"Ventos fortes (Mau tempo!)", 3:"Chuva forte (Mau tempo!)", 4:"Chuva forte (Mau tempo!)", 5:"Chuva forte (Mau tempo!)", 6:"Frio", 7:"Frio", 8:"Frio", 9:"Chuva irregular", 10:"Chuva irregular", 11:"Chuva irregular", 12:"Claro e seco" },
+    inverno: { 2:"Tempestade de neve (Mau tempo!)", 3:"Granizo (Mau tempo!)", 4:"Granizo (Mau tempo!)", 5:"Granizo (Mau tempo!)", 6:"Congelante (Mau tempo!)", 7:"Congelante (Mau tempo!)", 8:"Congelante (Mau tempo!)", 9:"Nublado", 10:"Nublado", 11:"Nublado", 12:"Claro e seco" }
+  };
+
+  function rollWeather() {
+    playDiceSound();
+    const season = document.getElementById('seasonSelect').value;
+    const r = d(6) + d(6);
+    const res = weatherTables[season][r];
+    const bad = res.includes("Mau tempo");
+    logConsole(`🌦️ <strong>Clima (${season.toUpperCase()} — 2d6 = ${r}):</strong> ${res}${bad ? ' — <em>Viajar exige Teste de FOR por Vigília ou ganha Exausto!</em>' : ''}`);
+  }
+
+  function rollEncounter() {
+    playDiceSound();
+    const r = d(6);
+    let txt = "Nenhum encontro agora.";
+    if (r === 1) txt = "<span style='color:#ff6b81'>ENCONTRO ALEATÓRIO!</span> Role na tabela da área e role Reação (2d6).";
+    if (r === 2) txt = "<span style='color:#ffd166'>PRESSÁGIO!</span> Sinais, rastros, cheiros ou sons de uma ameaça próxima.";
+    logConsole(`🎲 <strong>Checagem de Encontro (1d6 = ${r}):</strong> ${txt}`);
+  }
+
+  function rollReaction() {
+    playDiceSound();
+    const r = d(6) + d(6);
+    let react = r === 2 ? "Hostil. Como os ratos a irritaram?" : r <= 5 ? "Inamistosa. Como pode ser acalmada?" : r <= 8 ? "Incerta. O que poderia conquistá-la?" : r <= 11 ? "Falante. O que ela poderia negociar?" : "Útil. Como ela pode ajudar os ratos?";
+    logConsole(`🗣️ <strong>Reação (2d6 = ${r}):</strong> ${react}`);
+  }
+
+  function rollLuck() {
+    playDiceSound();
+    const target = parseInt(document.getElementById('luckChance').value);
+    const r = d(6);
+    logConsole(`🍀 <strong>Teste de Sorte (${target}-em-6):</strong> Rolou <strong>${r}</strong> — ${r <= target ? '<span style="color:#7bed9f">SIM, ACONTECE!</span>' : '<span style="color:#ff6b81">NÃO ACONTECE.</span>'}`);
+  }
+
+  function rollOmen() {
+    playDiceSound();
+    const r = d(6);
+    const res = r <= 3 ? "1-3: Rumor verdadeiro sobre um local de aventura ou facção." : r <= 5 ? "4-5: Verdade parcial (mistura fatos reais com exagero)." : "6: Mentira deslavada ou armadilha planejada por rivais.";
+    logConsole(`📜 <strong>Veracidade de Rumor (1d6 = ${r}):</strong> ${res}`);
+  }
+
+  // Gerador de Hexágonos
+  const hexLandmarks = {
+    Campo: ["Formigueiro","Faia, relâmpago acertou","Árvore branca","Esqueleto de vaca","Campo de flores","Campo de trigo","Fileira de sebe","Toco de árvore oca","Rocha enorme e plana","Lago ladeado por lírios","Árvore enorme caída","Carvalho velho e retorcido","Casa de fazenda antiga","Estrada de terra silenciosa","Toca de coelhos","Ninho de pardal","Conjunto de pinheiros","Colina íngreme","Parede de pedra","Raízes de figo emaranhadas"],
+    Floresta: ["Cabana abandonada","Clareira brilhante","Cachoeiras em cascata","Parede de penhasco","Fonte d'água, gelada","Arbustos densos","Rosto em carvalho antigo","Toca de raposa","Bosque de samambaias","Toco de árvore oca","Pinheiro enorme","Trilha de caminhada humana","Clareira feita por humanos","Riacho sinuoso","Ruínas cobertas de mato","Círculo de pedras","Afloramento rochoso","Vale subterrâneo","Emaranhado de raízes","Árvore tomada por cupins"],
+    Rio: ["Eclusa do canal","Afluentes convergentes","Salgueiro-chorão","Margem do rio erodida","Árvore caída sobre o rio","Cachoeira alta","Pedregulho enorme","Barragem enorme de concreto","Ilha isolada","Planícies lamacentas","Corredeiras rochosas","Fileira de árvores mortas","Barragem argilosa","Pedras de travessia","Ponte de pedras","Baixios pedregosos","Lixo submerso","Barcaça afundada","Raízes torcidas","Ponte de madeira"],
+    "Cidade humana": ["Carro abandonado","Varanda de apartamento","Cerca de amoreiras","Estrada congestionada","Saída de cano de esgoto","Móveis descartados","Estufa","Ruínas de ratos","Casa recém-construída","Canteiro de jardim descuidado","Ninho de pombo","Pilha de lixo","Leito de rio rochoso","Carrinho de compras","Lago de água parada","Ponte de aço","Caçamba cheia de lixo","Trilha arborizada","Estacionamento subterrâneo","Depósito de lenha"]
+  };
+
+  const hexDetails = [
+    ["Povoado de ratos (gere na caixa ao lado!)"],
+    ["Pequena fazenda de ratos (O que ameaça as colheitas?)","Castelo de Aristorato (Contra o que ele se defende?)","Estalagem de ratos amigáveis (O que há no porão?)","Alojamento de ratos caçadores (O que estão caçando?)","Posto de mineração (O que eles descobriram?)","Cabana de rato eremita (Por que ele evita a sociedade?)","Cavernas naturais (O que está vivendo aqui?)","Torre de Cavaleiro errante (Qual é a missão dele?)"],
+    ["Ninho de passarinho cantor (Que histórias tristes ele canta?)","Tribo de bestas enormes e pacíficas (O que elas temem?)","Esconderijo de ratos bandidos (Quem eles atacam?)","Torre de convenção de corvos (Que feitiços eles grasnam?)","Colmeia de insetos (Eles têm fome de quê?)","Covil de um grande predador (Que tesouros ele guarda?)","Fortaleza dos sapos (O que existe na masmorra?)","Torre de rato mago (Que feitiço está quase terminado?)"],
+    ["Formação natural perigosa (Como pode ser evitada?)","Santuário solitário (Quem o mantém? O que eles adoram?)","Mansão de Aristorato (Por que foi abandonada?)","Povoado abandonado (Que pistas eles deixaram?)","Torre de vigia arruinada (Do que ela protegia?)","Formação natural, calma e segura (Quem se reúne aqui?)","Formação natural fora do comum (Como se formou?)","Ponte frágil (O que ela atravessa?)"],
+    ["Antigo templo de Culto ao Morcego (O que foi invocado?)","Círculo das fadas (O que as fadas querem aqui?)","Cemitério de Besouros (O que os fantasmas querem?)","Cabana de rata bruxa (O que ela prepara?)","Lago pequeno e profundo (O que há no fundo?)","Vegetação fora de época (Por que está crescendo aqui?)","Ninho de coruja feiticeira (O que ela procura?)","Anomalia mágica estranha (Por que está se espalhando?)"],
+    ["Dirigível Liliputiano acidentado (Como pode ser consertado?)","Pedra cantarolante (O que acontece quando é tocada?)","Completamente sem vida (Que desastre ocorreu aqui?)","Usado regularmente por humanos (O que eles fazem aqui?)","Danificado por humanos (O que eles fizeram?)","Ruínas de uma civilização antiga (Quem construiu isso?)","Área de caça de Lorde Gato (Que troféus ainda restam?)","Construção humana reaproveitada (Como é usada?)"]
+  ];
+
+  function generateHex() {
+    playDiceSound();
+    const tRoll = d(6);
+    const type = tRoll <= 2 ? "Campo" : tRoll <= 4 ? "Floresta" : tRoll === 5 ? "Rio" : "Cidade humana";
+    const landmark = pick(hexLandmarks[type]);
+    const cat = d(6) - 1;
+    const detail = cat === 0 ? hexDetails[0][0] : pick(hexDetails[cat]);
+    document.getElementById('hexOutput').innerHTML = `<strong>Terreno:</strong> ${type}<br><strong>Marco:</strong> ${landmark}<br><strong>Detalhe:</strong> ${detail}`;
+  }
+
+  function generateSettlement() {
+    playDiceSound();
+    const startA = ["Lugarejo","Vilarejo","Moinho","Vale","Greta","Vila","Baixada","Semente","Cinza","Sebe","Ponto","Brilho"];
+    const startB = ["Tenda","Coruja","Torre","Bolota","Cobre","Portão","Riacho","Lago","Ninho","Bufunfa","Amigo","Queima"];
+    const endA = ["Carvalho","Fruto","Salgueiro","Fazenda","Ponte","Lua","Verde","Preto","Pedra","Vau","Cova","Maçã"];
+    const endB = ["Pântano","Colina","Raposa","Toco","Pinho","Ladrão","Minas","Ralo","Rosa","Colina","Figo","Tronco"];
+
+    const name = `${pick(d(2)===1 ? startA : startB)} ${pick(d(2)===1 ? endA : endB)}`;
+    const sizeRoll = Math.min(d(6), d(6));
+    const sizes = ["Fazenda/mansão (1-3 famílias)", "Encruzilhada (3-5 famílias)", "Aldeia (50-150 ratos)", "Vilarejo (150-300 ratos)", "Vila (300-1000 ratos)", "Cidade (1000+ ratos)"];
+    const govRoll = d(6) + sizeRoll;
+    const gov = govRoll <= 3 ? "Guiado pelos anciãos da aldeia" : govRoll <= 5 ? "Administrado por um cavaleiro ou senhor inferior" : govRoll <= 7 ? "Organizado por uma guilda" : govRoll <= 9 ? "Povoado livre, governado pelo conselho de burgoratos" : govRoll <= 11 ? "Casa de um aristorato de casta superior" : "Sede do poder baronial";
+    const habits = ["Raspam padrões na pelagem","Entorpecidos por plantas estranhas","Desconfiados com estranhos","Curiosos por notícias de longe","Acreditam que lamber a pelagem dá azar","Produzem hidromel com ervas fortes","Usam roupas finamente bordadas","Cobrem rostos com capuzes longos","Empobrecidos por tributos de Lorde Gato","Cortam caudas cerimonialmente","Caçadores de animais grandes","Descendentes de uma única matriarca","Assam tortas de frutas vermelhas","Fugitivos de laboratório ingênuos","Passam dias à toa no riacho","Rivalidade de sangue com outro povoado","Cavam túneis sob supervisão da guilda","Usam chapéus de abas largas","Leis e costumes confusos","Em trégua com um predador"];
+    const features = ["Labirinto de túneis com armadilhas","Pousada muito confortável","Santuário em madeira negra","Jardim de cogumelos para meditação","Crânio de vaca como sede de guilda","Favelas com barracos próximos","Casas de madeira penduradas","Portão ornamentado com estátuas","Templo secreto do Culto ao Morcego","Pista de corrida de besouro","Armazém abastecido com conservas","Doca fluvial escondida","Palácio de mármore em ruínas","Máquina humana funcionando","Ponte de madeira conecta o povoado","Torre retorcida muito alta","Lindo jardim de flores","Poleiro dos cavaleiros de pombos","Estátua de herói coberta de mato","Escada em espiral para o subsolo"];
+    const industries = ["Agricultores","Lenhadores","Pescadores com barcas","Fazenda de cogumelos","Secagem de grãos","Queijo forte envelhecido","Jardins de ervas raras","Apicultores","Comerciantes","Pedreiros","Moinho de farinha com roda d'água","Mina profunda de ferro/prata/estanho","Tecelagem de bichos-da-seda","Exploradores de cavernas","Cerâmica esmaltada","Moinho de lã","Escola excelente","Mercado movimentado","Coleta de lixo selecionado","Móveis de madeira entalhada"];
+    const events = ["Desastre, todos fazendo malas","Casamento com ruas floridas","Preparação para festa da estação","Uma doença atingiu o local","Armazém saqueado por insetos","Dia de feira lotado","Ratos discutindo fervorosamente","Formando Armada contra uma besta","Crianças desapareceram","Aristorato faz exigência fútil","Trupe de teatro chegou","Funeral com ruas esfumaçadas","Vigarista aplicando golpe","Besouro de estimação enlouqueceu","Emissária das fadas com pedido impossível","Planta crescendo rápido demais","Herança valiosa roubada","Lorde Gato exige tributo","Cerimônia de maioridade","Torre de mago nas costas de tartaruga"];
+    const dishes = ["Cenoura assada salteada","Caldo de minhoca cozida","Torta de amora","Queijo forte envelhecido","Mingau de cevada","Bifão de peixe de rio","Maçã assada","Perna de inseto empanada","Pão fresco com manteiga","Doces coletados","Sementes torradas com mel","Ensopado de cogumelos"];
+
+    document.getElementById('settlementOutput').innerHTML = `
+      <strong>${name}</strong> — ${sizes[sizeRoll - 1]}<br>
+      <strong>Governo:</strong> ${gov}<br>
+      <strong>Habitantes & Comércio:</strong> ${pick(habits)}. Indústria: ${pick(industries)}.<br>
+      <strong>Destaque:</strong> ${pick(features)}.<br>
+      <strong>Acontecendo agora:</strong> ${pick(events)}.<br>
+      <strong>Estalagem:</strong> Prato do dia — <em>${pick(dishes)}</em>.
+    `;
+  }
+
+  // =========================================================
+  // BESTIÁRIO COMPLETO (11 CRIATURAS) + ARENA DE ENCONTRO
+  // =========================================================
+  const creaturesData = [
+    { name: "Aranha", scale: "Individual", pr: 6, for: 8, des: 15, von: 10, arm: 1, atk: "d6 picada venenosa (dano em DES em vez de FOR)", crit: "Carrega para longe na teia", wants: "Alimentar seus bebês", variants: ["1. Viúva — Marcas vermelho vivo; d10 picada", "2. Lobo — Peluda; caça em grupos de d6 aranhas", "3. Pernuda — Geralmente pacífica; anda sobre a água", "4. Arquiteta — Tece túneis de teias confusos", "5. Interplanar — Teletransporte (ação): até d6×25 cm", "6. Fantasma — Só sofre dano de armas de prata ou mágicas"] },
+    { name: "Centopeia", scale: "Individual", pr: 8, for: 10, des: 12, von: 8, arm: 1, atk: "d6 picada venenosa (dano em DES em vez de FOR)", crit: "Veneno faz efeito: d12 dano em FOR", wants: "Vagar e devorar", variants: ["1. Gigante — Tamanho de cobra. 12 PR, FOR 15, Armadura 2", "2. Aquática — Arrasta a presa pra debaixo d'água", "3. Tigre — Faixas amarelas e pretas; d8 picada", "4. Gulosa — Sempre com fome, nunca para de crescer", "5. Velocista — Uma iguaria, se você conseguir pegá-la", "6. Emplumada — Pode planar distâncias curtas"] },
+    { name: "Cobra", scale: "Individual", pr: 12, for: 12, des: 10, von: 10, arm: 2, atk: "d8 picada", crit: "Engole por inteiro; d4 dano em FOR por Rodada até escapar", wants: "Dormir sem ser perturbada", variants: ["1. Madeira — Madeira esculpida, enfeitiçada para ganhar vida", "2. Sombra — Sempre desliza pra fora da vista", "3. Osso — Cobra-esqueleto ressuscitada dos mortos", "4. Enguia — Vive debaixo d'água. Cria ovos roubados", "5. Pergaminho — Nasceu com um feitiço gravado nas escamas", "6. Draco — Tem asas; cospe pequenas labaredas"] },
+    { name: "Coruja", scale: "Individual", pr: 15, for: 15, des: 15, von: 15, arm: 1, atk: "d10 bicada (Voa 3x velocidade normal; conhece 2 feitiços)", crit: "Padrão (Teste de FOR ou incapacitado/Ferido)", wants: "Coletar conhecimento e feitiços raros", variants: ["1. Bezalel — Constrói servos mecânicos", "2. Morgana — Em aliança com um Reino das Fadas", "3. Próspero — Cria servos quiméricos", "4. Gavião — Pode assumir a forma de qualquer pássaro", "5. Corvelei — Aprisiona fantasmas em feitiços", "6. Lechuza — Bruxa humana presa em forma de coruja"] },
+    { name: "Corvo", scale: "Individual", pr: 12, for: 12, des: 15, von: 15, arm: 1, atk: "d8 bicada (Voa 3x velocidade normal; sabe 2 músicas)", crit: "Padrão (Teste de FOR ou incapacitado/Ferido)", wants: "Proteger lugares sagrados secretos de quem os ameaça", variants: ["1. Alvorecer — Cria uma luz ofuscante", "2. Lamento — Ouvintes: Teste de VON ou ficam Amedrontados", "3. Visão — Prevê vagamente um evento futuro", "4. Vento — Lufada poderosa (Teste de FOR ou derrubado)", "5. Passado — Vê um evento passado das criaturas presentes", "6. Verdade — Ouvintes não podem mentir enquanto durar"] },
+    { name: "Fada", scale: "Individual", pr: 6, for: 10, des: 15, von: 15, arm: 0, atk: "d8 espadim de prata (Conhece 1 feitiço)", crit: "Padrão (Teste de FOR ou incapacitado/Ferido)", wants: "Promover os planos estranhos da Rainha das Fadas", variants: ["1. Sequestrar bebês ratos para criá-los como seus", "2. Dar presentes que causam inveja violenta", "3. Tocar música que enfeitiça os ratos a seu serviço", "4. Usar encantos para parecer um rato em perigo", "5. Apodrecer a comida em depósitos de inverno", "6. Enganar um povoado e tomar seus direitos"] },
+    { name: "Fantasma", scale: "Etéreo", pr: 9, for: 5, des: 10, von: 10, arm: 0, atk: "Poder fantasmagórico ou d8 toque arrepiante (dano em VON)", crit: "Controla a criatura (Só sofre dano de prata ou magia)", wants: "Libertar-se da dor que o liga ao reino mortal", variants: ["1. Cintilar — Cria d3 ilusões de si mesmo", "2. Poltergeist — Joga criatura/objeto para d6 × 15 cm", "3. Aprisionar — Puxa criatura ao reino espiritual por 1 Rodada", "4. Ruína — Dá a Condição Amedrontado a uma criatura", "5. Podridão — Estraga todas as rações de uma criatura", "6. Incorpóreo — Atravessa parede/chão e reaparece"] },
+    { name: "Gato", scale: "ESCALA DE ARMADA", pr: 15, for: 15, des: 15, von: 10, arm: 1, atk: "d6 patada, d8 mordida (Ignora dano fora da Escala de Armada)", crit: "Padrão (Escala de Armada)", wants: "Ser servido (pode poupar ratos que jurarem fidelidade e suborno)", variants: ["1. Baltazar — Adora comer as melhores iguarias", "2. Melquior — Ama ouro, joias e riqueza", "3. Salomão — Faz jogos cruéis com prisioneiros", "4. Hamurábi — Governa com lógica dura e inflexível", "5. Nefertiti — Ama arte, poesia e coisas bonitas", "6. Zenóbia — Formando um exército, quer governar"] },
+    { name: "Ratazana", scale: "Individual", pr: 3, for: 12, des: 8, von: 8, arm: 0, atk: "d6 cutelo", crit: "Padrão (Teste de FOR ou incapacitado/Ferido)", wants: "Riqueza fácil; rouba dos fracos", variants: ["1. Mataratz — Constroem armadilhas requintadas com sucata", "2. Ratos d'água — Mestres em navegação fluvial", "3. Ratos de Laboratório — Aparência bizarra; magia inata", "4. Cavaleiros do Lixo — Armadura 1 (peitoral e elmo de sucata)", "5. Ratalheiros — Chapéus e ternos amarrotados", "6. Os Reis — Caudas presas em um nó górdio"] },
+    { name: "Rato (Rival)", scale: "Individual", pr: 3, for: 9, des: 9, von: 9, arm: 0, atk: "d6 espada ou d6 arco", crit: "Padrão (Teste de FOR ou incapacitado/Ferido)", wants: "Sentir-se seguro", variants: ["1. Cardo — Cavaleiro desonrado, ainda arrogante", "2. Beladona — Mago desequilibrado procurando feitiços", "3. Fenogrão — Roubando para comprar fazenda de volta", "4. Mandrágora — Vigarista que parece inofensivo", "5. Calêndula — Adora fogo; teme sua ausência", "6. Foila — Rato enorme, exilado de uma terra distante"] },
+    { name: "Sapo", scale: "Individual", pr: 6, for: 12, des: 15, von: 8, arm: 1, atk: "d10 lança ou d6 língua (Sempre age 1º; salta 2x velocidade)", crit: "Pula para fora do alcance", wants: "Completar sua missão heroicamente", variants: ["1. Gual — Forte, coração bom e mente simples", "2. Felipe — Humano amaldiçoado procurando cura", "3. Lurf — Senso de honra doentio; surtos de raiva", "4. Slup — Quer matar uma grande fera, custe o que custar", "5. Uuu — Desesperado para provar força nas justas", "6. Puc — Procurando a lendária Caneca da Verdade"] }
+  ];
+
+  const creatureGrid = document.getElementById('creatureGrid');
+  const addFoeSelect = document.getElementById('addFoeSelect');
+
+  creaturesData.forEach((c, idx) => {
+    const opt = document.createElement('option');
+    opt.value = idx;
+    opt.textContent = `${c.name} (PR ${c.pr} | FOR ${c.for} | Arm ${c.arm})`;
+    addFoeSelect.appendChild(opt);
+
+    const card = document.createElement('div');
+    card.className = 'creature-card';
+    card.dataset.name = c.name.toLowerCase();
+    card.innerHTML = `
+      <div>
+        <div class="creature-header">
+          <h3>${c.name}</h3>
+          <span class="scale-tag">${c.scale}</span>
+        </div>
+        <div class="stat-strip">
+          <div>PR: ${c.pr}</div>
+          <div>FOR: ${c.for}</div>
+          <div>DES: ${c.des}</div>
+          <div>VON: ${c.von}</div>
+          <div>ARM: ${c.arm}</div>
+        </div>
+        <div class="creature-body">
+          <p><strong>Ataques:</strong> ${c.atk}</p>
+          <p><strong>Dano Crítico:</strong> ${c.crit}</p>
+          <p><strong>Deseja:</strong> ${c.wants}</p>
+          <ul class="variants-list">${c.variants.map(v => `<li>${v}</li>`).join('')}</ul>
+        </div>
+      </div>
+      <div class="combat-tracker">
+        <button class="accent" onclick="addFoeByIndex(${idx})">+ Cena</button>
+        <button class="ghost" onclick="rollCreatureVariant(${idx})">🎲 Variante (d6)</button>
+        <button class="ghost" onclick="rollCreatureMoral(${idx})">🏳️ Moral (VON ${c.von})</button>
+      </div>
+    `;
+    creatureGrid.appendChild(card);
+  });
+
+  function filterCreatures() {
+    const q = document.getElementById('creatureFilter').value.toLowerCase();
+    document.querySelectorAll('.creature-card').forEach(card => {
+      card.style.display = card.dataset.name.includes(q) ? 'flex' : 'none';
+    });
+  }
+
+  function rollCreatureVariant(idx) {
+    playDiceSound();
+    const c = creaturesData[idx];
+    const r = d(6);
+    logConsole(`🐾 <strong>${c.name} (Variante d6 = ${r}):</strong> ${c.variants[r - 1]}`);
+  }
+
+  function rollCreatureMoral(idx) {
+    playDiceSound();
+    const c = creaturesData[idx];
+    const r = d(20);
+    logConsole(`🏳️ <strong>Teste de Moral — ${c.name} (VON ${c.von}):</strong> Rolou <strong>${r}</strong> — ${r <= c.von ? '<span style="color:#7bed9f">MANTÉM POSIÇÃO!</span>' : '<span style="color:#ff6b81">FOGE OU SE RENDE!</span>'}`);
+  }
+
+  // Rastreador de Inimigos em Cena
+  let activeFoes = [];
+  function addFoeToEncounter() { addFoeByIndex(parseInt(addFoeSelect.value)); }
+  function addFoeByIndex(idx) {
+    const c = creaturesData[idx];
+    const count = activeFoes.filter(f => f.name.startsWith(c.name)).length + 1;
+    activeFoes.push({ id: Date.now() + Math.random(), name: `${c.name} #${count}`, pr: c.pr, for: c.for, des: c.des, von: c.von, arm: c.arm, atk: c.atk });
+    renderEncounter();
+  }
+
+  function removeFoe(id) {
+    activeFoes = activeFoes.filter(f => f.id !== id);
+    renderEncounter();
+  }
+
+  function clearEncounter() {
+    activeFoes = [];
+    renderEncounter();
+  }
+
+  function testFoeSave(name, statName, val) {
+    playDiceSound();
+    const r = d(20);
+    logConsole(`⚔️ <strong>${name} — Teste de ${statName} (${val}):</strong> Rolou <strong>${r}</strong> — ${r <= val ? '<span style="color:#7bed9f">SUCESSO!</span>' : '<span style="color:#ff6b81">FALHA!</span>'}`);
+  }
+
+  function renderEncounter() {
+    const list = document.getElementById('encounterList');
+    if (activeFoes.length === 0) {
+      list.innerHTML = `<div style="font-size:0.78rem; color:var(--muted);">Nenhum inimigo adicionado à cena.</div>`;
+      return;
+    }
+    list.innerHTML = activeFoes.map(f => `
+      <div class="foe-row">
+        <strong style="min-width:110px;">${f.name}</strong>
+        <span>Arm: <strong>${f.arm}</strong></span>
+        <span>PR: <input type="number" value="${f.pr}"></span>
+        <span>FOR: <input type="number" value="${f.for}"></span>
+        <button class="ghost" onclick="testFoeSave('${f.name}','FOR',${f.for})">FOR ${f.for}</button>
+        <button class="ghost" onclick="testFoeSave('${f.name}','DES',${f.des})">DES ${f.des}</button>
+        <button class="ghost" onclick="testFoeSave('${f.name}','VON',${f.von})">Moral ${f.von}</button>
+        <span style="font-size:0.72rem; color:var(--muted);">(${f.atk})</span>
+        <button class="ghost" style="margin-left:auto; color:var(--accent);" onclick="removeFoe(${f.id})">✕</button>
+      </div>
+    `).join('');
+  }
+
+  // =========================================================
+  // GERADORES (LOCAIS, SALAS, TESOUROS, ESPADAS, FEITIÇOS, PNJ)
+  // =========================================================
+  function generateAdventureSite() {
+    playDiceSound();
+    const cons = ["Templo ancestral do Culto ao Morcego","Torre de vigia abandonada","Mansão de campo de Aristorato","Armazém de inverno escondido","Cemitério de ratos anciãos","Toca cavada por coelhos/raposas","Casa humana ou edifício","Canos de esgoto/drenagem","Túneis claustrofóbicos de formigas","Árvore enorme esculpida por ratos","Torre de mago","Moinho de grãos","Ninho do Rei Ratazana","Esqueleto de uma grande besta","Academia de bruxa","Portão para o Reino das Fadas","Mina profunda","Esconderijo de bandidos","Caverna natural","Povoado de ratos"];
+    const ruin = ["Inundação","Acidente mágico","Idade e podridão","Destruição humana","Invadido por mofo","Deslocado entre reinos","Atacado por grande besta","Tempestade desastrosa","Assombrado por espíritos","Abandono misterioso","Guerra interna","Doença"];
+    const hab = ["Ratos enlouquecidos ou desesperados","Ratos alterados magicamente","Ratazanas bandidas","Criaturas de uma terra distante","Residentes originais distorcidos","Espíritos fantasmagóricos","Guarda avançada das fadas","Cobra mal-humorada","Infestação de insetos","Lorde Gato e seus servos"];
+    const goal = ["Um lugar seguro para viver","Reserva de comida boa","Familiar ou amigo perdido","Obras de arte antigas","Os últimos restos já vasculhados","Cogumelos alquímicos raros","Feitiço estranho e poderoso","Um enorme tesouro de grãos"];
+    const secret = ["Monólito zumbindo com energia arcana","Besta precursora preservada","Sinais de experimentação humana","Sepultura esquecida de uma rainha ancestral","Caminho para as veias da terra","Portal para o Reino das Fadas"];
+
+    document.getElementById('siteOutput').innerHTML = `
+      <strong>Construção:</strong> ${pick(cons)} (Arruinada por: <em>${pick(ruin)}</em>)<br>
+      <strong>Habitantes:</strong> ${pick(hab)}<br>
+      <strong>Buscando/Protegendo:</strong> ${pick(goal)}<br>
+      <strong>Segredo Oculto:</strong> ${pick(secret)}
+    `;
+  }
+
+  function generateRoom() {
+    playDiceSound();
+    const tRoll = d(6), cRoll = d(6), trRoll = d(6);
+    let type = "", content = "", hasCreature = false, hasTreasure = false;
+
+    if (tRoll <= 2) {
+      type = "Sala Vazia"; hasCreature = cRoll <= 3; hasTreasure = trRoll === 1;
+      content = pick(["Ninho de inseto abandonado","Aglomerado de cogumelos","Parede desmoronada","Cascas de insetos nas paredes","Móveis de lixo reaproveitado","Desenho de morcego na parede","Mesas e cadeiras bagunçadas","Papel de parede de recortes de jornais","Coberto de musgo","Mural pintado desbotado","Plataformas sobre água rápida","Raízes saindo das paredes","Pilha de bolotas podres","Dentes de animais espalhados","Cartazes de papel de bala","Porta feita com crânio de cobra","Goteira constante","Estátua de rato ancestral","Piso rachado","Altar de quartzo branco"]);
+    } else if (tRoll === 3) {
+      type = "Obstáculo"; hasCreature = cRoll <= 2; hasTreasure = trRoll === 1;
+      content = pick(["Porta trancada (chave em outra sala)","Subida íngreme (risco de Exaustão/queda)","Saída no meio do telhado a 15 cm das paredes","Dispositivo de grito agudo (Condição Amedrontado por Turno)","Túnel desmoronado com fenda estreita","Túnel cheio d'água","Poça profunda de lama (Exausto a cada 15 cm)","Tubo de metal/plástico liso inclinado"]);
+    } else if (tRoll === 4) {
+      type = "Armadilha"; hasCreature = cRoll === 1; hasTreasure = trRoll <= 2;
+      content = pick(["Porta de pedra solta cai ao girar maçaneta","Corredor inundado eletrificado por bateria","Sala escura com gás explosivo (d20 dano se incendiado)","Linha fina sobre queda mortal","Poço com cobra dormindo no fundo","Porta com 3 maçanetas de cogumelo (2 venenosas: d12 dano)","Círculo de cogumelos encantados com rato jovem","Chão coberto de cola pegajosa (Teste de FOR)"]);
+    } else if (tRoll === 5) {
+      type = "Enigma"; hasCreature = cRoll === 1; hasTreasure = trRoll <= 5;
+      content = pick(["Piso de chapa de cobre eletrificada com tesouro no centro","Três bebedouros coloridos (perigosos se misturados)","Cristal duro com espada mágica (dissolve em ácido estomacal)","Tesouro no fundo de um poço profundo","Tigela de aço virada com tesouro colado no teto interno","Ratoeira com isca ligada a pedra que derruba o corredor"]);
+    } else {
+      type = "Covil"; hasCreature = cRoll <= 5; hasTreasure = trRoll <= 4;
+      content = pick(["Acampamento temporário","Tomado recentemente de outra criatura","Construído por ratos para prender a criatura","Protegendo filhotes","Lar permanente recém-instalado","Lar permanente confortável"]);
+    }
+
+    document.getElementById('siteOutput').innerHTML = `<strong>Tipo:</strong> ${type} | <strong>Criatura:</strong> ${hasCreature ? 'SIM' : 'Não'} | <strong>Tesouro:</strong> ${hasTreasure ? 'SIM' : 'Não'}<br><strong>Conteúdo:</strong> ${content}`;
+  }
+
+  const spellsList = [
+    "2. Bola de Fogo: Lança bola de fogo até 60 cm. Causa [SOMA]+[DADOS] dano em 15 cm. (Recarga: Queime em fogo intenso por 3 dias e 3 noites)",
+    "3. Cura: Cura [SOMA] de dano na FOR e remove Ferido. (Recarga: Corte-se por d6 dano em FOR e respingue sangue)",
+    "4. Míssil Mágico: Causa [SOMA]+[DADOS] dano a 1 criatura visível. (Recarga: Jogue de 9m de altura e toque em 1 Turno)",
+    "5. Medo: Causa Condição Amedrontado em [DADOS] criaturas. (Recarga: Receba Condição Amedrontado de criatura hostil)",
+    "6. Escuridão: Esfera de [SOMA]×5 cm de escuridão pura por [DADOS] Turnos. (Recarga: Deixe no escuro absoluto por 3 dias)",
+    "7. Restaurar: Remove Exausto ou Amedrontado de [DADOS]+1 criaturas. (Recarga: Enterre em campo pacífico/rio por 3 dias)",
+    "8. Ser Entendido: Compreendido por [DADOS] criaturas de outras espécies por [DADOS] Turnos. (Recarga: Dê presente livremente a outra espécie)",
+    "9. Besouro Fantasma: Besouro ilusório com 6 espaços por [DADOS]×6 Turnos. (Recarga: Enterre em cemitério de besouros por 3 noites)",
+    "10. Luz: Atordoa [DADOS] criaturas (Teste VON) ou cria luz de tocha por [SOMA] Turnos. (Recarga: Capte 1º nascer e último pôr do sol em 3 dias)",
+    "11. Anel Invisível: Anel de força imóvel de [DADOS]×15 cm por [DADOS] Turnos. (Recarga: Forje anel de ferro do mesmo tamanho e passe o feitiço)",
+    "12. Arrombar: Abre porta/recipiente como FOR 10 + [DADOS]×4. (Recarga: Coloque dentro de 3 caixas trancadas concêntricas por 3 dias)",
+    "13. Graxa: Cobre [DADOS]×15 cm com graxa inflamável (Teste DES ou cai). (Recarga: Envolva em gordura animal até apodrecer)",
+    "14. Crescer: Criatura cresce [DADOS]+1 vezes por 1 Turno. (Recarga: Deixe nos galhos mais altos de uma árvore por 3 dias)",
+    "15. Invisibilidade: Invisível por [DADOS] Turnos (mover reduz 1 Turno). (Recarga: Passe 1 dia de olhos fechados segurando o feitiço)",
+    "16. Erva-gateira: Transforma objeto em isca irresistível para gatos por [DADOS] Turnos. (Recarga: Presenteie um gato com algo que ele deseja)"
+  ];
+
+  function generateSpell() {
+    playDiceSound();
+    const r = d(8) + d(8);
+    document.getElementById('treasureOutput').innerHTML = `<strong>Tabuleta de Feitiço (2d8 = ${r}):</strong><br>${spellsList[r - 2]}`;
+  }
+
+  function generateMagicSword() {
+    playDiceSound();
+    const types = ["Média (d6 1 pata / d8 2 patas)","Média (d6 1 pata / d8 2 patas)","Média (d6 1 pata / d8 2 patas)","Média (d6 1 pata / d8 2 patas)","Leve (d6 1 pata, combina com outra arma)","Pesada (d10 ambas as patas)"];
+    const powers = ["Ferro forjado: Testes de Dano Crítico com Vantagem","Projeto Feérico: Disfarça-se como qualquer criatura tamanho rato","Prego enferrujado: Dano Crítico causa Amedrontado","Presa de cobra: Dano Crítico causa +d6 dano em DES","Sabre de soldado de brinquedo: Armada liderada ganha +1 Armadura","Vidro d'água: Prende respiração debaixo d'água por 1 Turno","Dente de lobo: Dano Crítico deixa próximo ataque Melhorado","Agulha de costura de prata: Dano Crítico limpa todos os usos de 1 item não-mágico","Haste de rosa espinhosa: Dano Crítico remove uma Condição","Sombra congelada: Invisível quando perfeitamente imóvel"];
+    const curses = ["Maldição: Testes de Dano Crítico com Desvantagem (Expurgo: Sacrifício altruísta de vida ou morte)","Maldição: Ao ganhar Exausto, ganhe outra (Expurgo: Trocar de lugar com fazendeiro pobre por 1 estação)","Maldição: Teste de VON para não atacar ao sentir ameaça (Expurgo: Fazer pazes duradouras com inimigo mortal)","Maldição: Jogadas de Reação têm -1 (Expurgo: Doar tudo que possui sem trapacear)","Maldição: Aliado sofre dano = ganha Amedrontado (Expurgo: Realizar último desejo de rato moribundo)","Maldição: Feitiços próximos sempre marcam uso (Expurgo: Destruir fonte de poder de Coruja Feiticeira)"];
+    const cursed = d(6) === 1;
+    document.getElementById('treasureOutput').innerHTML = `<strong>Espada Mágica (${pick(types)}):</strong><br>${pick(powers)}<br>${cursed ? `<span style="color:var(--accent); font-weight:bold;">⚠️ AMALDIÇOADA! ${pick(curses)}</span>` : '<em>Sem maldição (só marca uso ao rolar 6).</em>'}`;
+  }
+
+  function generateTreasure() {
+    playDiceSound();
+    const r = d(20);
+    if (r === 1) { generateMagicSword(); return; }
+    if (r === 2) { generateSpell(); return; }
+    let res = "";
+    if (r === 3) res = "Bugiganga: " + pick(["Lanterna fantasma (bane fantasmas)","Conchas falantes","Canudo de respiração infinita","Adaga de cultista do morcego","Feijões mágicos (crescem em d6 Turnos)","Dispositivo humano funcional"]);
+    else if (r === 4) res = "Tesouro Valioso: " + pick(["Roda de queijo nobre curado (100g)","Corrente de prata (2 espaços, 500g)","Pingente de joias (400g)","Anel de ouro (500g)","Diamante polido (1000g)","Colar de pérolas (2 espaços, 1500g)"]);
+    else if (r === 5) res = "Tesouro Incomum: " + pick(["Pacote de ervas fortes (200g)","Cogumelos secos estranhos (200g)","Pedra brilhante (300g)","Herança sentimental de aristorato","Documentos de direitos de terra","Mapa do tesouro"]);
+    else if (r <= 8) res = "Tesouro Grande: " + pick(["Colher de prata enorme (2 espaços, 300g)","Pente de marfim (4 espaços, 400g)","Garrafa de conhaque fino (4 espaços, 500g)","Estátua de rato ancestral (4 espaços, 500g)","Trono de rato ancestral (6 espaços, 1000g)","Relógio de pulso dourado gigante (4 espaços, 1000g)"]);
+    else if (r <= 10) res = "Tesouro Útil: " + pick([`${d(6)} pacotes de rações bem conservadas`,`${d(6)} conjuntos de tochas`,"Arma mundana","Armadura mundana","Item utilitário mundano","Rato perdido disposto a ajudar"]);
+    else if (r === 11) res = `Caixa contendo ${d(6) * 100} grãos`;
+    else if (r <= 14) res = `Mochila contendo ${d(6) * 50} grãos`;
+    else if (r <= 17) res = `Bolsa contendo ${d(6) * 10} grãos`;
+    else res = `${d(6) * 5} grãos espalhados pelo chão`;
+    document.getElementById('treasureOutput').innerHTML = `<strong>Resultado do Tesouro (d20 = ${r}):</strong><br>${res}`;
+  }
+
+  function generateNPC() {
+    playDiceSound();
+    const fn = ["Ada","Ágata","Alecrina","Avelã","Beladona","Bri","Calêndula","Canela","Clara","Íris","Lavanda","Magnólia","Margarida","Opala","Papoula","Pimenta","Rosa","Violeta","Acácio","Aldo","Ambrósio","Bardano","Boldo","Cássio","Conrado","Cupim","Edmundo","Ernesto","Esporão","Funcho","Horácio","Jasper","Joaquim","Lorenzo","Manjericão","Oliver","Orin","Ripchip","Simon"];
+    const mn = ["Bodespinha","Branco","Caisemente","Espinho","Fazedor","Forte","Grande","Graum","Iscador","Larinverna","Larverano","Manteiglobo","Metade","Montacervo","Neves","Perigo","Preto","Sagaz","Subagato","Tunelador"];
+    const status = [`Pobre (paga ${d(6)}g)`,`Comum (paga ${d(6)*10}g)`,`Comum (paga ${d(6)*10}g)`,`Burgorato (paga ${d(6)*50}g)`,`Rato de Guilda (paga ${d(4)*100}g)`,`Aristorato (paga ${d(4)*1000}g)`];
+    const signs = ["Estrela (Corajoso/Imprudente)","Roda (Trabalhador/Sem imaginação)","Bolota (Curioso/Teimoso)","Tempestade (Generoso/Raivoso)","Lua (Sábio/Misterioso)","Mãe (Protetor/Ansioso)"];
+    const look = ["Olhos cheios de alma","Roupas brilhantes e remendadas","Grinalda de margaridas","Roupas sujas","Grande chapéu frouxo","Bolsos cheios de sementes","Bengala de galho torto","Alfinete-espada enferrujada","Pelo longo e selvagem","Muito velho","Cauda enfaixada","Cauda amarrada com laço","Sem uma orelha","Bigodes longos","Olhos cintilantes","Capa preta pesada","Velhas cicatrizes de batalha","Muito jovem","Pelo raspado","Pelo trançado"];
+    const quirk = ["Se limpa toda hora","Obcecado com o clima","Muito enérgico","Viajado, vivido","Amaldiçoado por um mago","Assusta-se facilmente","Envergonhado de crimes passados","Muito competitivo","Bêbado extravagante","Extremamente educado","Sincero sem reservas","Fala lenta e cuidadosa","Discurso rápido e errático","Servo secreto de um gato","Criado por ratazanas","Exilado de casa","Muitos insetos de estimação","Odeia estar ao ar livre","Herói local","Bigodes irrequietos"];
+    const want = ["Liberdade","Segurança","Escapar","Entusiasmo","Poder","Sentido","Saúde","Riqueza","Proteção","Amor","Proteger","Comida","Amizade","Descanso","Conhecimento","Selvageria","Beleza","Vingança","Servir","Diversão"];
+
+    document.getElementById('npcOutput').innerHTML = `<strong>${pick(fn)} ${pick(mn)}</strong> — ${pick(status)}<br><strong>Signo:</strong> ${pick(signs)}<br><strong>Visual & Traço:</strong> ${pick(look)}; ${pick(quirk)}.<br><strong>Objetivo:</strong> Busca <em>${pick(want)}</em>.`;
+  }
+
+  function generateHook() {
+    playDiceSound();
+    const creatures = ["Pescador","Família rebelde","Mago","Pastor de Baratas","Agricultor","Burgomestre","Forrageador","Lojista","Comerciante viajante","Cavaleiro de pombo","Cervejeiro","Herborista","Mensageiro corredor","Vagabundo","Cobaia","Minerador de estanho","Padeiro","Cavaleiro andante","Coletor de impostos","Matriarca","Garimpeiro","Chefe da Guilda dos Túneis","Aristorato","Ratazana bandida","Abelha rainha","Oficial do exército de formigas","Coruja feiticeira","Lorde Gato","Patinho","Embuá gigante","Embaixador de Lilliput","Fantasma preso","Enviado das fadas","Enxame de mosquitos","Vovó aranha","Bebê pássaro"];
+    const problems = ["Foi acusado de um crime","Procurando um novo lar","Está sendo seguido","Descobriu um artefato estranho","Teve um presságio inquietante","Quer assassinar um rival","Quer recuperar tesouro perdido","A casa foi destruída","O bem mais valioso foi roubado","Foi sequestrado","Foi exilado do povoado","Em busca de uma cura rara","Perdeu seu caminho","Teve toda a sua comida roubada","Está fugindo dos humanos","Foi emboscado por bandidos","Comeu uma frutinha venenosa","Familiar está desaparecido","Perdeu muitos grãos","Foi acusado de assassinato","Jabuti de carga ficou preso","Foi assassinado","Seu lar está sob ataque","Quer roubar de um rival","Viajando para uma nova casa","Está sendo caçado por inimigos","Quer recuperar um feitiço raro","Quer ser entretido","Perdeu a mãe","Quer um lugar quente para dormir","Quer alcançar a Rainha dos ratos","Quer encontrar seu verdadeiro amor","Quer sequestrar um rato","Quer roubar do rato de um jogador","Perdeu um tesouro antigo","Não consegue chegar em casa"];
+    const comps = ["O Ajudante de um jogador é o responsável","Precisa atravessar um rio","Antagonista é sua própria sombra","Tem amnésia","O antagonista está disfarçado","A casa de um rato jogador está envolvida","Protegido por bestas estranhas","Antagonista é o amigo mais próximo","É o verdadeiro antagonista","Amigo de rato jogador está envolvido","Foi incriminado injustamente","É muito urgente","Tem informações vitais","O antagonista tinha um bom motivo","Está sendo rastreado por um chip","O antagonista está muito bêbado","O antagonista é um parente","Está morrendo","Está muito bêbado","Antagonista é um metamorfo","É muito mais rico do que parece","O rival do rato jogador está envolvido","Antagonista quer vingança","Um fantasma está assombrando o local","Seus seguidores discordam","Está gravemente ferido","Fica no fundo de uma caverna","Prendeu os ratos dos jogadores","Precisa chegar a uma ilha","Precisa de um item de um rato jogador","Não entende os costumes locais","Não pode deixar seu local atual","Um rato jogador é o alvo","Antagonista é extremamente habilidoso","Eles o comeram","Precisa subir em uma árvore"];
+
+    document.getElementById('hookOutput').innerHTML = `<strong>Cliente / Envolvido:</strong> ${pick(creatures)}<br><strong>Situação:</strong> ${pick(problems)}<br><strong>Reviravolta:</strong> ${pick(comps)}`;
+  }
+
+  // =========================================================
+  // ABA 4: RASTREADOR DE FACÇÕES (Pág. 31)
+  // =========================================================
+  const factionTemplates = [
+    { name: "Lordes Gatos", resources: ["Presença aterrorizante", "Mercenários e bandidos contratados", "Riqueza exorbitante"], goals: [{ text: "Recolher propinas de povoados", max: 3, cur: 0 }, { text: "Sequestrar ratos como servos", max: 3, cur: 0 }, { text: "Subjugar um povoado", max: 5, cur: 0 }] },
+    { name: "Aristoratos", resources: ["Cavaleiros ambiciosos", "Advogados traiçoeiros", "Armazéns abastecidos"], goals: [{ text: "Aumentar receita tributária", max: 2, cur: 0 }, { text: "Adquirir novos direitos à terra", max: 3, cur: 0 }, { text: "Estabelecer novo povoado", max: 4, cur: 0 }] },
+    { name: "Guilda dos Túneis", resources: ["Turma que trabalha pesado", "Solidariedade dos ratos trabalhadores"], goals: [{ text: "Intimidar coletor de impostos", max: 2, cur: 0 }, { text: "Destruir mansão de aristorato", max: 3, cur: 0 }, { text: "Estabelecer povoado livre", max: 5, cur: 0 }] },
+    { name: "Bandidos Ratazanas", resources: ["Gangue cruel", "Esconderijo secreto"], goals: [{ text: "Dominar a rota de troca", max: 2, cur: 0 }, { text: "Estabelecer uma milícia", max: 3, cur: 0 }, { text: "Capturar uma fortaleza", max: 4, cur: 0 }] },
+    { name: "Rainha das Fadas", resources: ["Estradas e portais ocultos", "Agentes metamorfos", "Prata ilusória e ilimitada"], goals: [{ text: "Capturar ratos", max: 2, cur: 0 }, { text: "Destituir um rato do poder", max: 3, cur: 0 }, { text: "Levar povoado para Terra das Fadas", max: 5, cur: 0 }] },
+    { name: "Corujas Feiticeiras", resources: ["Magia poderosa", "Velocidade e fúria", "Servos mágicos"], goals: [{ text: "Tomar pináculo de vidência dos corvos", max: 3, cur: 0 }, { text: "Localizar um vórtice mágico", max: 3, cur: 0 }, { text: "Aproveitar poder do vórtice", max: 5, cur: 0 }] },
+    { name: "Ninhada de Cobras", resources: ["Assassinos silenciosos", "Rastros arrepiantes"], goals: [{ text: "Assassinar ancião do povoado", max: 3, cur: 0 }, { text: "Assassinar um aristorato", max: 4, cur: 0 }, { text: "Assassinar a rainha", max: 5, cur: 0 }] },
+    { name: "Cultistas", resources: ["Poder místico mal compreendido", "Agentes infiltrados"], goals: [{ text: "Recrutar ratos vulneráveis", max: 2, cur: 0 }, { text: "Roubar artefato poderoso", max: 3, cur: 0 }, { text: "Conjurar deus antigo", max: 5, cur: 0 }] },
+    { name: "Príncipe Sapo", resources: ["Cavaleiros cavalheirescos", "Fortaleza escondida"], goals: [{ text: "Realizar justa e escolher campeão", max: 3, cur: 0 }, { text: "Sequestrar rato historiador", max: 3, cur: 0 }, { text: "Encontrar a Caneca da Verdade", max: 6, cur: 0 }] },
+    { name: "Convenção de Corvos", resources: ["Bruxas corvinas astutas", "Músicas mágicas grasnadoras", "Pináculo de vidência"], goals: [{ text: "Sequestrar rato fazendeiro", max: 2, cur: 0 }, { text: "Capturar espírito do clima", max: 4, cur: 0 }, { text: "Criar máquina climática", max: 5, cur: 0 }] }
+  ];
+
+  const fSelect = document.getElementById('factionTemplateSelect');
+  factionTemplates.forEach((f, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = f.name;
+    fSelect.appendChild(opt);
+  });
+
+  let activeFactions = [];
+
+  function addFactionFromTemplate() {
+    const tpl = JSON.parse(JSON.stringify(factionTemplates[parseInt(fSelect.value)]));
+    tpl.id = Date.now() + Math.random();
+    activeFactions.push(tpl);
+    renderFactions();
+    saveGMState();
+  }
+
+  function toggleFactionDot(fId, gIdx, dotIdx) {
+    const f = activeFactions.find(x => x.id === fId);
+    if (!f) return;
+    const goal = f.goals[gIdx];
+    goal.cur = (goal.cur === dotIdx + 1) ? dotIdx : dotIdx + 1;
+    renderFactions();
+    saveGMState();
+  }
+
+  function rollFactionProgress(fName, resCount) {
+    playDiceSound();
+    const r = d(6);
+    const total = r + resCount;
+    const adv = total >= 6 ? "+2 marcas de progresso!" : total >= 4 ? "+1 marca de progresso!" : "Nenhum avanço desta vez.";
+    logConsole(`👑 <strong>Avanço de Facção — ${fName}:</strong> d6 (${r}) + ${resCount} recursos = <strong>${total}</strong> → ${adv}`);
+  }
+
+  function removeFaction(fId) {
+    activeFactions = activeFactions.filter(x => x.id !== fId);
+    renderFactions();
+    saveGMState();
+  }
+
+  function renderFactions() {
+    const container = document.getElementById('factionsList');
+    if (activeFactions.length === 0) {
+      container.innerHTML = `<div style="font-size:0.78rem; color:var(--muted);">Selecione 3 a 4 facções acima para acompanhar seus objetivos na campanha.</div>`;
+      return;
+    }
+    container.innerHTML = activeFactions.map(f => `
+      <div class="faction-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <strong>${f.name} (${f.resources.length} recursos)</strong>
+          <div>
+            <button class="ghost" onclick="rollFactionProgress('${f.name}', ${f.resources.length})">🎲 Avançar</button>
+            <button class="ghost" style="color:var(--accent);" onclick="removeFaction(${f.id})">✕</button>
+          </div>
+        </div>
+        <div style="font-size:0.74rem; color:var(--muted); margin-bottom:6px;">Recursos: ${f.resources.join(' • ')}</div>
+        ${f.goals.map((g, gIdx) => `
+          <div class="goal-row">
+            <div>
+              ${Array.from({ length: g.max }).map((_, dIdx) => `<span class="dot ${dIdx < g.cur ? 'filled' : ''}" onclick="toggleFactionDot(${f.id}, ${gIdx}, ${dIdx})"></span>`).join('')}
+            </div>
+            <span>${g.text}</span>
+          </div>
+        `).join('')}
+      </div>
+    `).join('');
+  }
+
+  // =========================================================
+  // ABA 5: TABELA DE MERCADO & PREÇOS (Pág. 44 & 15)
+  // =========================================================
+  const marketItems = [
+    ["Armas", "Improvisada (galho, pedra — d6)", "1g"],
+    ["Armas", "Leve (adaga, agulha — d6, 1 pata)", "10g"],
+    ["Armas", "Média (espada, machado — d6/d8)", "20g"],
+    ["Armas", "Pesada (lança, alabarda — d10, 2 patas)", "40g"],
+    ["Armas", "Disparo leve (funda, besta de mão — d6)", "10g"],
+    ["Armas", "Disparo pesada (arco, besta — d8, 2 patas)", "40g"],
+    ["Armas", "Munição (Bolsa de pedras / Aljava de flechas)", "1g / 5g"],
+    ["Armaduras", "Armadura Leve (1 def — Outra pata + Corpo)", "150g"],
+    ["Armaduras", "Armadura Pesada (1 def — 2 espaços Corpo)", "500g"],
+    ["Armaduras", "Reparo de arma/armadura (por ponto de uso)", "10% do preço"],
+    ["Luz", "Tochas (3 pontos de uso, 6 Turnos/uso)", "10g"],
+    ["Luz", "Lanterna / Óleo para lanterna", "50g / 10g"],
+    ["Luz", "Lanterna elétrica (6 usos) / Baterias", "200g / 50g"],
+    ["Hospedagem", "Beliche (por noite) / Quarto privado", "1g / 5g"],
+    ["Hospedagem", "Banho quente / Refeição / Rações de viagem", "2g / 2g / 5g"],
+    ["Hospedagem", "Refeição grandiosa / Noitada na cidade", "50g / 100g"],
+    ["Transporte", "Carroça de coelhos / Jangada de rio (por hex)", "5g / 10g"],
+    ["Transporte", "Voo de pombo (por hexágono)", "200g"],
+    ["Ferr. Rato", "Estacas, Giz, Vara 15cm, Garrafa", "1g"],
+    ["Ferr. Rato", "Apito, Balde, Cantil, Cinzel, Cola, Lima, Graxa", "5g"],
+    ["Ferr. Rato", "Berrante, Broca, Estrepes, Fole, Martelo, Pá, Panelas, Pé de cabra, Picareta, Rede, Saco de dormir", "10g"],
+    ["Ferr. Rato", "Cadeado pequeno (20g), Perfume (50g), Barraca (80g), Gazuas (100g), Espelho/Instrumento (200g), Livro (300g-600g)", "20g–600g"],
+    ["Ferr. Humana", "Sabão (10g), Agulha/Anzol/Linha/Incenso (20g), Barbante/Corrente (40g), Fósforos (80g), Cadeado grande/Ratoeira/Veneno (100g), Lente (200g), Ampulheta (300g)", "10g–300g"],
+    ["Construção", "Túnel (15cm) / Cômodo humilde / Padrão / Suntuoso", "10g / 100g / 500g / 2000g"]
+  ];
+
+  const mBody = document.querySelector('#marketTable tbody');
+  marketItems.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><strong>${row[0]}</strong></td><td>${row[1]}</td><td><strong>${row[2]}</strong></td>`;
+    mBody.appendChild(tr);
+  });
+
+  function filterMarket() {
+    const q = document.getElementById('marketFilter').value.toLowerCase();
+    mBody.querySelectorAll('tr').forEach(tr => {
+      tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  }
+
+  // =========================================================
+  // PERSISTÊNCIA LOCAL E BACKUP JSON
+  // =========================================================
+  function saveGMState() {
+    const turns = [];
+    document.querySelectorAll('.turn-box').forEach((b, i) => {
+      if (b.classList.contains('checked')) turns.push(i + 1);
+    });
+    const state = {
+      dayCount: document.getElementById('dayCount').value,
+      season: document.getElementById('seasonSelect').value,
+      gmNotes: document.getElementById('gmNotes').value,
+      turns,
+      activeFactions
+    };
+    localStorage.setItem('mausritter_gm_screen_v1', JSON.stringify(state));
+  }
+
+  function loadGMState(custom = null) {
+    const raw = custom || localStorage.getItem('mausritter_gm_screen_v1');
+    if (!raw) { renderFactions(); return; }
+    const state = typeof raw === 'string' ? JSON.parse(raw) : raw;
+    if (state.dayCount) document.getElementById('dayCount').value = state.dayCount;
+    if (state.season) document.getElementById('seasonSelect').value = state.season;
+    if (state.gmNotes) document.getElementById('gmNotes').value = state.gmNotes;
+    document.querySelectorAll('.turn-box').forEach(b => b.classList.remove('checked'));
+    if (state.turns) {
+      state.turns.forEach(t => {
+        const el = document.getElementById(`turn-${t}`);
+        if (el) el.classList.add('checked');
+      });
+    }
+    if (state.activeFactions) activeFactions = state.activeFactions;
+    renderFactions();
+  }
+
+  function exportCampaign() {
+    saveGMState();
+    const raw = localStorage.getItem('mausritter_gm_screen_v1');
+    const blob = new Blob([raw], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `mausritter_campanha_mestre.json`;
+    a.click();
+  }
+
+  function importCampaign(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      loadGMState(e.target.result);
+      saveGMState();
+      logConsole(`📂 <strong>Campanha carregada com sucesso!</strong>`);
+    };
+    reader.readAsText(file);
+  }
+
+  window.onload = () => loadGMState();
+</script>
+</body>
+</html>
